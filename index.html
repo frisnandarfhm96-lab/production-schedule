@@ -3,250 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Production & Delivery Schedule - PO vs Actual</title>
-    <!-- Tailwind CSS untuk Desain Modern -->
+    <title>Production & Delivery Daily Matrix Schedule</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen p-4 md:p-8">
-    <div class="max-w-7xl mx-auto space-y-6">
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen p-2 md:p-6">
+    <div class="max-w-full mx-auto space-y-4">
         
         <!-- Header -->
-        <header class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <header class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-900">📊 Production & Delivery Schedule</h1>
-                <p class="text-sm text-slate-500">Monitoring Perbandingan PO (Target) vs Actual (Realisasi)</p>
+                <h1 class="text-xl font-bold text-slate-900">📅 Production & Delivery Matrix Schedule</h1>
+                <p class="text-xs text-slate-500">Monitoring Harian: Actual Prod vs Plan Delivery & Balance</p>
             </div>
-            <div class="flex items-center gap-3">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                    🟢 Live System Active
+            <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                    🟢 Live GitHub Pages
                 </span>
             </div>
         </header>
 
-        <!-- Ringkasan Statistik / KPI Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total PO Aktif</p>
-                <h3 class="text-3xl font-bold text-slate-900 mt-1" id="totalPO">3</h3>
+        <!-- Tabel Matrix Utama -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Jadwal Harian Produk / PO</h2>
+                <span class="text-xs text-slate-400">Geser tabel ke samping untuk melihat tanggal lainnya ➡️</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">On-Time Delivery (OTD)</p>
-                <h3 class="text-3xl font-bold text-blue-600 mt-1" id="otdRate">67%</h3>
-            </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Produksi Tercapai</p>
-                <h3 class="text-3xl font-bold text-emerald-600 mt-1" id="prodRate">95%</h3>
-            </div>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Status Delay / Selisih</p>
-                <h3 class="text-3xl font-bold text-amber-600 mt-1" id="delayCount">1 PO</h3>
-            </div>
-        </div>
-
-        <!-- Form Input Data Baru -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h2 class="text-lg font-bold text-slate-900 mb-4">➕ Tambah Data PO & Actual Baru</h2>
-            <form id="poForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">No. PO</label>
-                    <input type="text" id="inputNoPo" required placeholder="Contoh: PO-2026-004" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nama Customer</label>
-                    <input type="text" id="inputCustomer" required placeholder="Contoh: PT ABC" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nama Produk / Keterangan</label>
-                    <input type="text" id="inputProduct" required placeholder="Contoh: Dus Kemasan (1000 pcs)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">PO Qty (Target)</label>
-                    <input type="number" id="inputPoQty" required placeholder="1000" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Actual Qty (Realisasi)</label>
-                    <input type="number" id="inputActQty" required placeholder="1000" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Target Selesai</label>
-                    <input type="date" id="inputTargetDate" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Actual Selesai</label>
-                    <input type="date" id="inputActDate" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Status Delivery</label>
-                    <select id="inputStatus" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="Completed">Completed (Selesai)</option>
-                        <option value="Delayed">Delayed (Terlambat)</option>
-                        <option value="In Production">In Production (Proses)</option>
-                    </select>
-                </div>
-                <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl text-sm hover:bg-blue-700 transition shadow-sm">
-                        Simpan & Tambahkan Data
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Tabel Data Utama -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h2 class="text-lg font-bold text-slate-900">Daftar Jadwal PO vs Actual</h2>
-                <span class="text-xs text-slate-400">Update Real-time</span>
-            </div>
+            
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-sm">
+                <table class="w-auto border-collapse text-xs whitespace-nowrap">
                     <thead>
-                        <tr class="bg-slate-50 text-slate-500 uppercase text-xs tracking-wider border-b border-slate-200">
-                            <th class="p-4">No. PO</th>
-                            <th class="p-4">Customer / Produk</th>
-                            <th class="p-4 text-center">PO Qty vs Actual Qty</th>
-                            <th class="p-4 text-center">Target Selesai vs Actual</th>
-                            <th class="p-4 text-center">Status Delivery</th>
-                            <th class="p-4 text-center">Aksi</th>
+                        <!-- Baris Bulan -->
+                        <tr class="bg-slate-800 text-white text-center font-bold">
+                            <th rowspan="2" class="p-2 border border-slate-700 min-w-[160px] bg-slate-900">ITEM / PRODUK / PO</th>
+                            <th colspan="4" class="p-2 border border-slate-600 bg-amber-500 text-slate-900">AGUSTUS</th>
+                            <th colspan="30" class="p-2 border border-slate-600 bg-slate-700">SEPTEMBER</th>
+                            <th rowspan="2" class="p-2 border border-slate-700 min-w-[70px] bg-amber-400 text-slate-900">TOTAL</th>
+                        </tr>
+                        <!-- Baris Tanggal -->
+                        <tr class="bg-slate-200 text-slate-700 text-center font-semibold">
+                            <!-- Agustus: 29, 30, 31 -->
+                            <th class="p-1 border border-slate-300 w-10">29</th>
+                            <th class="p-1 border border-slate-300 w-10 text-red-600 bg-red-100">30</th>
+                            <th class="p-1 border border-slate-300 w-10">31</th>
+                            
+                            <!-- September: 01 s.d 30 -->
+                            <th class="p-1 border border-slate-300 w-10">01</th>
+                            <th class="p-1 border border-slate-300 w-10">02</th>
+                            <th class="p-1 border border-slate-300 w-10">03</th>
+                            <th class="p-1 border border-slate-300 w-10">04</th>
+                            <th class="p-1 border border-slate-300 w-10">05</th>
+                            <th class="p-1 border border-slate-300 w-10 text-red-600 bg-red-100">06</th>
+                            <th class="p-1 border border-slate-300 w-10">07</th>
+                            <th class="p-1 border border-slate-300 w-10">08</th>
+                            <th class="p-1 border border-slate-300 w-10">09</th>
+                            <th class="p-1 border border-slate-300 w-10">10</th>
+                            <th class="p-1 border border-slate-300 w-10">11</th>
+                            <th class="p-1 border border-slate-300 w-10">12</th>
+                            <th class="p-1 border border-slate-300 w-10 text-red-600 bg-red-100">13</th>
+                            <th class="p-1 border border-slate-300 w-10">14</th>
+                            <th class="p-1 border border-slate-300 w-10">15</th>
+                            <th class="p-1 border border-slate-300 w-10">16</th>
+                            <th class="p-1 border border-slate-300 w-10">17</th>
+                            <th class="p-1 border border-slate-300 w-10">18</th>
+                            <th class="p-1 border border-slate-300 w-10">19</th>
+                            <th class="p-1 border border-slate-300 w-10 text-red-600 bg-red-100">20</th>
+                            <th class="p-1 border border-slate-300 w-10">21</th>
+                            <th class="p-1 border border-slate-300 w-10">22</th>
+                            <th class="p-1 border border-slate-300 w-10">23</th>
+                            <th class="p-1 border border-slate-300 w-10">24</th>
+                            <th class="p-1 border border-slate-300 w-10">25</th>
+                            <th class="p-1 border border-slate-300 w-10">26</th>
+                            <th class="p-1 border border-slate-300 w-10 text-red-600 bg-red-100">27</th>
+                            <th class="p-1 border border-slate-300 w-10">28</th>
+                            <th class="p-1 border border-slate-300 w-10">29</th>
+                            <th class="p-1 border border-slate-300 w-10">30</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100" id="scheduleTableBody">
-                        <!-- Data Dummy Awal -->
-                        <tr class="hover:bg-slate-50/50">
-                            <td class="p-4 font-semibold text-slate-900">PO-2026-001</td>
-                            <td class="p-4">
-                                <div class="font-medium text-slate-900">PT Maju Jaya</div>
-                                <div class="text-xs text-slate-500">Box Karton Custom</div>
+                    <tbody class="divide-y divide-slate-200">
+                        
+                        <!-- PRODUK 1 (Contoh Baris 1 dari Gambar) -->
+                        <tr class="hover:bg-slate-50">
+                            <td rowspan="3" class="p-2 border border-slate-300 font-bold bg-slate-50 align-middle">
+                                <div class="text-slate-900">Produk A / PO-001</div>
+                                <div class="text-[10px] text-slate-500 font-normal">Box Kemasan Custom</div>
                             </td>
-                            <td class="p-4 text-center">
-                                <span class="font-semibold text-slate-700">1,000</span> / 
-                                <span class="font-semibold text-emerald-600">1,000</span>
-                            </td>
-                            <td class="p-4 text-center text-xs">
-                                <span class="text-slate-500">2026-03-20</span><br>
-                                <span class="text-emerald-600 font-medium">2026-03-19 (On Time)</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Completed</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
-                            </td>
+                            <td class="p-1 border border-slate-300 text-center bg-white"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-white"></td>
+                            <!-- 01 - 30 -->
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td rowspan="3" class="p-2 border border-slate-300 text-center font-bold bg-amber-50 align-middle">9,000</td>
                         </tr>
-                        <tr class="hover:bg-slate-50/50">
-                            <td class="p-4 font-semibold text-slate-900">PO-2026-002</td>
-                            <td class="p-4">
-                                <div class="font-medium text-slate-900">CV Sentosa Abadi</div>
-                                <div class="text-xs text-slate-500">Plastik Packaging</div>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="font-semibold text-slate-700">5,000</span> / 
-                                <span class="font-semibold text-amber-600">4,800</span>
-                            </td>
-                            <td class="p-4 text-center text-xs">
-                                <span class="text-slate-500">2026-03-22</span><br>
-                                <span class="text-amber-600 font-medium">2026-03-25 (Delayed)</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Delayed</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
-                            </td>
+                        <tr class="hover:bg-slate-50 text-blue-700 font-medium">
+                            <!-- PLAN DELIVERY ROW -->
+                            <td class="p-1 border border-slate-300 text-center bg-white"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-white">1,000</td>
+                            <td class="p-1 border border-slate-300 text-center">500</td>
+                            <td class="p-1 border border-slate-300 text-center">500</td>
+                            <td class="p-1 border border-slate-300 text-center">1,000</td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center">1,000</td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center">1,000</td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center">1,000</td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center">1,000</td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center">1,000</td>
+                            <td class="p-1 border border-slate-300 text-center">500</td>
+                            <td class="p-1 border border-slate-300 text-center">500</td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-50"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
+                            <td class="p-1 border border-slate-300 text-center"></td>
                         </tr>
-                        <tr class="hover:bg-slate-50/50">
-                            <td class="p-4 font-semibold text-slate-900">PO-2026-003</td>
-                            <td class="p-4">
-                                <div class="font-medium text-slate-900">PT Global Elektronik</div>
-                                <div class="text-xs text-slate-500">Label Sticker Roll</div>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="font-semibold text-slate-700">2,500</span> / 
-                                <span class="font-semibold text-emerald-600">2,500</span>
-                            </td>
-                            <td class="p-4 text-center text-xs">
-                                <span class="text-slate-500">2026-03-26</span><br>
-                                <span class="text-emerald-600 font-medium">2026-03-25 (On Time)</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">In Production</span>
-                            </td>
-                            <td class="p-4 text-center">
-                                <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
-                            </td>
+                        <tr class="hover:bg-slate-50 text-red-600 bg-red-50/50 font-semibold text-[11px]">
+                            <!-- BALANCE ROW -->
+                            <td class="p-1 border border-slate-300 text-center bg-white">0</td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-100">0</td>
+                            <td class="p-1 border border-slate-300 text-center bg-white">-1,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-1,500</td>
+                            <td class="p-1 border border-slate-300 text-center">-2,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-3,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-3,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-4,000</td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-100">-4,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-4,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-4,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-4,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-4,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-5,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-5,000</td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-100">-6,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-6,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-7,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-7,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-7,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-7,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-7,000</td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-100">-8,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-8,500</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center bg-red-100">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
+                            <td class="p-1 border border-slate-300 text-center">-9,000</td>
                         </tr>
+
                     </tbody>
                 </table>
             </div>
         </div>
 
     </div>
-
-    <!-- JavaScript untuk Menambah & Menghitung Data Otomatis -->
-    <script>
-        const form = document.getElementById('poForm');
-        const tableBody = document.getElementById('scheduleTableBody');
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Ambil nilai dari inputan form
-            const noPo = document.getElementById('inputNoPo').value;
-            const customer = document.getElementById('inputCustomer').value;
-            const product = document.getElementById('inputProduct').value;
-            const poQty = parseInt(document.getElementById('inputPoQty').value).toLocaleString();
-            const actQty = parseInt(document.getElementById('inputActQty').value).toLocaleString();
-            const targetDate = document.getElementById('inputTargetDate').value;
-            const actDate = document.getElementById('inputActDate').value;
-            const status = document.getElementById('inputStatus').value;
-
-            // Tentukan warna badge status
-            let badgeClass = "bg-blue-100 text-blue-800";
-            if (status === "Completed") badgeClass = "bg-emerald-100 text-emerald-800";
-            if (status === "Delayed") badgeClass = "bg-amber-100 text-amber-800";
-
-            // Buat baris baru untuk tabel
-            const newRow = document.createElement('tr');
-            newRow.className = "hover:bg-slate-50/50";
-            newRow.innerHTML = `
-                <td class="p-4 font-semibold text-slate-900">${noPo}</td>
-                <td class="p-4">
-                    <div class="font-medium text-slate-900">${customer}</div>
-                    <div class="text-xs text-slate-500">${product}</div>
-                </td>
-                <td class="p-4 text-center">
-                    <span class="font-semibold text-slate-700">${poQty}</span> / 
-                    <span class="font-semibold text-emerald-600">${actQty}</span>
-                </td>
-                <td class="p-4 text-center text-xs">
-                    <span class="text-slate-500">${targetDate}</span><br>
-                    <span class="text-slate-700 font-medium">${actDate}</span>
-                </td>
-                <td class="p-4 text-center">
-                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeClass}">${status}</span>
-                </td>
-                <td class="p-4 text-center">
-                    <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
-                </td>
-            `;
-
-            // Masukkan baris baru ke paling atas tabel
-            tableBody.prepend(newRow);
-
-            // Reset form setelah disubmit
-            form.reset();
-            updateStats();
-        });
-
-        function deleteRow(btn) {
-            const row = btn.closest('tr');
-            row.remove();
-            updateStats();
-        }
-
-        function updateStats() {
-            const rows = tableBody.querySelectorAll('tr');
-            document.getElementById('totalPO').innerText = rows.length;
-        }
-    </script>
 </body>
 </html>
