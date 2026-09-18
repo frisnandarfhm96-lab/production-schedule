@@ -31,16 +31,64 @@
             </div>
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">On-Time Delivery (OTD)</p>
-                <h3 class="text-3xl font-bold text-blue-600 mt-1" id="otdRate">85%</h3>
+                <h3 class="text-3xl font-bold text-blue-600 mt-1" id="otdRate">67%</h3>
             </div>
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Produksi Tercapai</p>
-                <h3 class="text-3xl font-bold text-emerald-600 mt-1" id="prodRate">94%</h3>
+                <h3 class="text-3xl font-bold text-emerald-600 mt-1" id="prodRate">95%</h3>
             </div>
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                 <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Status Delay / Selisih</p>
                 <h3 class="text-3xl font-bold text-amber-600 mt-1" id="delayCount">1 PO</h3>
             </div>
+        </div>
+
+        <!-- Form Input Data Baru -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">➕ Tambah Data PO & Actual Baru</h2>
+            <form id="poForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">No. PO</label>
+                    <input type="text" id="inputNoPo" required placeholder="Contoh: PO-2026-004" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nama Customer</label>
+                    <input type="text" id="inputCustomer" required placeholder="Contoh: PT ABC" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nama Produk / Keterangan</label>
+                    <input type="text" id="inputProduct" required placeholder="Contoh: Dus Kemasan (1000 pcs)" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">PO Qty (Target)</label>
+                    <input type="number" id="inputPoQty" required placeholder="1000" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Actual Qty (Realisasi)</label>
+                    <input type="number" id="inputActQty" required placeholder="1000" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Target Selesai</label>
+                    <input type="date" id="inputTargetDate" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Actual Selesai</label>
+                    <input type="date" id="inputActDate" required class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Status Delivery</label>
+                    <select id="inputStatus" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Completed">Completed (Selesai)</option>
+                        <option value="Delayed">Delayed (Terlambat)</option>
+                        <option value="In Production">In Production (Proses)</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2 lg:col-span-4 flex justify-end">
+                    <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl text-sm hover:bg-blue-700 transition shadow-sm">
+                        Simpan & Tambahkan Data
+                    </button>
+                </div>
+            </form>
         </div>
 
         <!-- Tabel Data Utama -->
@@ -58,62 +106,72 @@
                             <th class="p-4 text-center">PO Qty vs Actual Qty</th>
                             <th class="p-4 text-center">Target Selesai vs Actual</th>
                             <th class="p-4 text-center">Status Delivery</th>
+                            <th class="p-4 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100" id="scheduleTableBody">
-                        <!-- Baris Data Dummy -->
+                        <!-- Data Dummy Awal -->
                         <tr class="hover:bg-slate-50/50">
                             <td class="p-4 font-semibold text-slate-900">PO-2026-001</td>
                             <td class="p-4">
                                 <div class="font-medium text-slate-900">PT Maju Jaya</div>
-                                <div class="text-xs text-slate-500">Box Karton Custom (1000 pcs)</div>
+                                <div class="text-xs text-slate-500">Box Karton Custom</div>
                             </td>
                             <td class="p-4 text-center">
                                 <span class="font-semibold text-slate-700">1,000</span> / 
                                 <span class="font-semibold text-emerald-600">1,000</span>
                             </td>
                             <td class="p-4 text-center text-xs">
-                                <span class="text-slate-500">20 Mar 2026</span><br>
-                                <span class="text-emerald-600 font-medium">19 Mar 2026 (On Time)</span>
+                                <span class="text-slate-500">2026-03-20</span><br>
+                                <span class="text-emerald-600 font-medium">2026-03-19 (On Time)</span>
                             </td>
                             <td class="p-4 text-center">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Completed</span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50/50">
                             <td class="p-4 font-semibold text-slate-900">PO-2026-002</td>
                             <td class="p-4">
                                 <div class="font-medium text-slate-900">CV Sentosa Abadi</div>
-                                <div class="text-xs text-slate-500">Plastik Packaging (5,000 pcs)</div>
+                                <div class="text-xs text-slate-500">Plastik Packaging</div>
                             </td>
                             <td class="p-4 text-center">
                                 <span class="font-semibold text-slate-700">5,000</span> / 
                                 <span class="font-semibold text-amber-600">4,800</span>
                             </td>
                             <td class="p-4 text-center text-xs">
-                                <span class="text-slate-500">22 Mar 2026</span><br>
-                                <span class="text-amber-600 font-medium">25 Mar 2026 (Delayed)</span>
+                                <span class="text-slate-500">2026-03-22</span><br>
+                                <span class="text-amber-600 font-medium">2026-03-25 (Delayed)</span>
                             </td>
                             <td class="p-4 text-center">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Delayed</span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50/50">
                             <td class="p-4 font-semibold text-slate-900">PO-2026-003</td>
                             <td class="p-4">
                                 <div class="font-medium text-slate-900">PT Global Elektronik</div>
-                                <div class="text-xs text-slate-500">Label Sticker Roll (2,500 pcs)</div>
+                                <div class="text-xs text-slate-500">Label Sticker Roll</div>
                             </td>
                             <td class="p-4 text-center">
                                 <span class="font-semibold text-slate-700">2,500</span> / 
                                 <span class="font-semibold text-emerald-600">2,500</span>
                             </td>
                             <td class="p-4 text-center text-xs">
-                                <span class="text-slate-500">26 Mar 2026</span><br>
-                                <span class="text-emerald-600 font-medium">25 Mar 2026 (On Time)</span>
+                                <span class="text-slate-500">2026-03-26</span><br>
+                                <span class="text-emerald-600 font-medium">2026-03-25 (On Time)</span>
                             </td>
                             <td class="p-4 text-center">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">In Production</span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
                             </td>
                         </tr>
                     </tbody>
@@ -122,5 +180,73 @@
         </div>
 
     </div>
+
+    <!-- JavaScript untuk Menambah & Menghitung Data Otomatis -->
+    <script>
+        const form = document.getElementById('poForm');
+        const tableBody = document.getElementById('scheduleTableBody');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Ambil nilai dari inputan form
+            const noPo = document.getElementById('inputNoPo').value;
+            const customer = document.getElementById('inputCustomer').value;
+            const product = document.getElementById('inputProduct').value;
+            const poQty = parseInt(document.getElementById('inputPoQty').value).toLocaleString();
+            const actQty = parseInt(document.getElementById('inputActQty').value).toLocaleString();
+            const targetDate = document.getElementById('inputTargetDate').value;
+            const actDate = document.getElementById('inputActDate').value;
+            const status = document.getElementById('inputStatus').value;
+
+            // Tentukan warna badge status
+            let badgeClass = "bg-blue-100 text-blue-800";
+            if (status === "Completed") badgeClass = "bg-emerald-100 text-emerald-800";
+            if (status === "Delayed") badgeClass = "bg-amber-100 text-amber-800";
+
+            // Buat baris baru untuk tabel
+            const newRow = document.createElement('tr');
+            newRow.className = "hover:bg-slate-50/50";
+            newRow.innerHTML = `
+                <td class="p-4 font-semibold text-slate-900">${noPo}</td>
+                <td class="p-4">
+                    <div class="font-medium text-slate-900">${customer}</div>
+                    <div class="text-xs text-slate-500">${product}</div>
+                </td>
+                <td class="p-4 text-center">
+                    <span class="font-semibold text-slate-700">${poQty}</span> / 
+                    <span class="font-semibold text-emerald-600">${actQty}</span>
+                </td>
+                <td class="p-4 text-center text-xs">
+                    <span class="text-slate-500">${targetDate}</span><br>
+                    <span class="text-slate-700 font-medium">${actDate}</span>
+                </td>
+                <td class="p-4 text-center">
+                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeClass}">${status}</span>
+                </td>
+                <td class="p-4 text-center">
+                    <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 text-xs font-medium">Hapus</button>
+                </td>
+            `;
+
+            // Masukkan baris baru ke paling atas tabel
+            tableBody.prepend(newRow);
+
+            // Reset form setelah disubmit
+            form.reset();
+            updateStats();
+        });
+
+        function deleteRow(btn) {
+            const row = btn.closest('tr');
+            row.remove();
+            updateStats();
+        }
+
+        function updateStats() {
+            const rows = tableBody.querySelectorAll('tr');
+            document.getElementById('totalPO').innerText = rows.length;
+        }
+    </script>
 </body>
 </html>
