@@ -1,0 +1,350 @@
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+        <!-- Stats / Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-sm font-medium text-gray-500">Total PO Aktif</p>
+                <p id="statTotalPO" class="text-3xl font-bold text-gray-800 mt-2">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-sm font-medium text-gray-500">On-Time Delivery (OTD)</p>
+                <p id="statOTD" class="text-3xl font-bold text-emerald-600 mt-2">0%</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-sm font-medium text-gray-500">Produksi Tercapai</p>
+                <p id="statProdAchieve" class="text-3xl font-bold text-blue-600 mt-2">0%</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <p class="text-sm font-medium text-gray-500">Status Delay / Selisih</p>
+                <p id="statDelayed" class="text-3xl font-bold text-rose-600 mt-2">0 PO</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Volume: PO Qty vs Actual Qty</h3>
+                <div class="relative h-64">
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Status Pengiriman (Delivery Performance)</h3>
+                <div class="relative h-64 flex justify-center">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-800">Daftar Jadwal & Realisasi</h3>
+                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari PO / Customer..." class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider font-semibold">
+                            <th class="px-6 py-3">No. PO & Customer</th>
+                            <th class="px-6 py-3">Produk</th>
+                            <th class="px-6 py-3">Target (PO)</th>
+                            <th class="px-6 py-3">Actual Produksi</th>
+                            <th class="px-6 py-3">Jadwal Kirim (Plan vs Act)</th>
+                            <th class="px-6 py-3">Status</th>
+                            <th class="px-6 py-3 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="poTableBody" class="divide-y divide-gray-100 text-sm text-gray-700">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Form -->
+    <div id="poModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl relative max-h-[90vh] overflow-y-auto">
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-800 mb-4">Tambah Data PO Baru</h3>
+            <form id="poForm" onsubmit="savePO(event)" class="space-y-4">
+                <input type="hidden" id="poIndex">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nomor PO</label>
+                    <input type="text" id="poNumber" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Contoh: PO-2026-001">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nama Customer</label>
+                    <input type="text" id="customerName" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="PT. Maju Bersama">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nama Produk</label>
+                    <input type="text" id="productName" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Kardus Kemasan B">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Target Qty (PO)</label>
+                        <input type="number" id="poQty" required min="1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="1000">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Actual Qty Prod</label>
+                        <input type="number" id="actQty" required min="0" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="1000">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Target Kirim (Plan)</label>
+                        <input type="date" id="planDate" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Actual Kirim</label>
+                        <input type="date" id="actDate" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" onclick="closeModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">Batal</button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-4 text-center text-xs text-gray-500 mt-auto">
+        Ready to deploy on Netlify. © 2026 Production & Delivery Planning.
+    </footer>
+</div>
+
+<script>
+    // Initial Data Sample
+    let poData = JSON.parse(localStorage.getItem('po_production_data')) || [
+        { id: 1, poNumber: "PO-88101", customer: "PT Jaya Makmur", product: "Box Corrugated A", poQty: 5000, actQty: 5000, planDate: "2026-03-20", actDate: "2026-03-20" },
+        { id: 2, poNumber: "PO-88102", customer: "CV Berkah Abadi", product: "Plastik Wrapping 50cm", poQty: 1200, actQty: 1000, planDate: "2026-03-22", actDate: "2026-03-24" },
+        { id: 3, poNumber: "PO-88103", customer: "PT Suka Sentosa", product: "Label Sticker Roll", poQty: 10000, actQty: 10000, planDate: "2026-03-25", actDate: "" }
+    ];
+
+    let volumeChartInstance = null;
+    let statusChartInstance = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+        updateStats();
+        renderCharts();
+    });
+
+    function openModal(index = null) {
+        document.getElementById('poModal').classList.remove('hidden');
+        if (index !== null) {
+            document.getElementById('modalTitle').innerText = 'Edit Data PO';
+            document.getElementById('poIndex').value = index;
+            const item = poData[index];
+            document.getElementById('poNumber').value = item.poNumber;
+            document.getElementById('customerName').value = item.customer;
+            document.getElementById('productName').value = item.product;
+            document.getElementById('poQty').value = item.poQty;
+            document.getElementById('actQty').value = item.actQty;
+            document.getElementById('planDate').value = item.planDate;
+            document.getElementById('actDate').value = item.actDate;
+        } else {
+            document.getElementById('modalTitle').innerText = 'Tambah Data PO Baru';
+            document.getElementById('poForm').reset();
+            document.getElementById('poIndex').value = '';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('poModal').classList.add('hidden');
+    }
+
+    function savePO(e) {
+        e.preventDefault();
+        const index = document.getElementById('poIndex').value;
+        const newItem = {
+            id: index !== '' ? poData[index].id : Date.now(),
+            poNumber: document.getElementById('poNumber').value,
+            customer: document.getElementById('customerName').value,
+            product: document.getElementById('productName').value,
+            poQty: parseInt(document.getElementById('poQty').value),
+            actQty: parseInt(document.getElementById('actQty').value),
+            planDate: document.getElementById('planDate').value,
+            actDate: document.getElementById('actDate').value
+        };
+
+        if (index !== '') {
+            poData[index] = newItem;
+        } else {
+            poData.push(newItem);
+        }
+
+        localStorage.setItem('po_production_data', JSON.stringify(poData));
+        closeModal();
+        renderTable();
+        updateStats();
+        renderCharts();
+    }
+
+    function deletePO(index) {
+        if (confirm('Yakin ingin menghapus data PO ini?')) {
+            poData.splice(index, 1);
+            localStorage.setItem('po_production_data', JSON.stringify(poData));
+            renderTable();
+            updateStats();
+            renderCharts();
+        }
+    }
+
+    function getStatus(item) {
+        if (!item.actDate) {
+            return { label: 'On Progress', class: 'bg-amber-100 text-amber-800' };
+        }
+        if (item.actDate <= item.planDate && item.actQty >= item.poQty) {
+            return { label: 'On Time & Complete', class: 'bg-emerald-100 text-emerald-800' };
+        } else if (item.actDate > item.planDate) {
+            return { label: 'Delayed Delivery', class: 'bg-rose-100 text-rose-800' };
+        } else {
+            return { label: 'Shortage Qty', class: 'bg-blue-100 text-blue-800' };
+        }
+    }
+
+    function renderTable(dataToRender = poData) {
+        const tbody = document.getElementById('poTableBody');
+        tbody.innerHTML = '';
+
+        if (dataToRender.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-6 text-center text-gray-400">Belum ada data PO tersimpan.</td></tr>`;
+            return;
+        }
+
+        dataToRender.forEach((item, index) => {
+            const status = getStatus(item);
+            tbody.innerHTML += `
+                <tr class="hover:bg-gray-50/55 transition">
+                    <td class="px-6 py-4">
+                        <span class="font-semibold text-gray-900">${item.poNumber}</span>
+                        <p class="text-xs text-gray-500">${item.customer}</p>
+                    </td>
+                    <td class="px-6 py-4 text-gray-800">${item.product}</td>
+                    <td class="px-6 py-4">
+                        <span class="font-medium">${item.poQty.toLocaleString()} pcs</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="font-medium ${item.actQty < item.poQty ? 'text-rose-600' : 'text-emerald-600'}">${item.actQty.toLocaleString()} pcs</span>
+                    </td>
+                    <td class="px-6 py-4 text-xs">
+                        <p><span class="text-gray-400">Plan:</span> ${item.planDate || '-'}</p>
+                        <p><span class="text-gray-400">Act:</span> ${item.actDate || 'Belum Kirim'}</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${status.class}">${status.label}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="openModal(${index})" class="text-indigo-600 hover:text-indigo-900 mr-2 text-xs font-medium">Edit</button>
+                        <button onclick="deletePO(${index})" class="text-rose-600 hover:text-rose-900 text-xs font-medium">Hapus</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function updateStats() {
+        const total = poData.length;
+        document.getElementById('statTotalPO').innerText = total;
+
+        if (total === 0) {
+            document.getElementById('statOTD').innerText = '0%';
+            document.getElementById('statProdAchieve').innerText = '0%';
+            document.getElementById('statDelayed').innerText = '0 PO';
+            return;
+        }
+
+        let onTimeCount = 0;
+        let deliveredCount = 0;
+        let achieveSum = 0;
+        let delayedCount = 0;
+
+        poData.forEach(item => {
+            achieveSum += Math.min(100, (item.actQty / item.poQty) * 100);
+            if (item.actDate) {
+                deliveredCount++;
+                if (item.actDate <= item.planDate) {
+                    onTimeCount++;
+                }
+            }
+            if (item.actDate && item.actDate > item.planDate) {
+                delayedCount++;
+            }
+        });
+
+        const otd = deliveredCount > 0 ? Math.round((onTimeCount / deliveredCount) * 100) : 100;
+        const avgAchieve = Math.round(achieveSum / total);
+
+        document.getElementById('statOTD').innerText = otd + '%';
+        document.getElementById('statProdAchieve').innerText = avgAchieve + '%';
+        document.getElementById('statDelayed').innerText = delayedCount + ' PO';
+    }
+
+    function renderCharts() {
+        const labels = poData.map(d => d.poNumber);
+        const poQtys = poData.map(d => d.poQty);
+        const actQtys = poData.map(d => d.actQty);
+
+        // Volume Chart
+        const ctxVol = document.getElementById('volumeChart').getContext('2d');
+        if (volumeChartInstance) volumeChartInstance.destroy();
+        volumeChartInstance = new Chart(ctxVol, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Target PO Qty', data: poQtys, backgroundColor: '#6366f1', borderRadius: 4 },
+                    { label: 'Actual Qty', data: actQtys, backgroundColor: '#10b981', borderRadius: 4 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Status Pie/Doughnut Chart
+        let onTime = 0, delayed = 0, progress = 0;
+        poData.forEach(item => {
+            if (!item.actDate) progress++;
+            else if (item.actDate <= item.planDate) onTime++;
+            else delayed++;
+        });
+
+        const ctxStatus = document.getElementById('statusChart').getContext('2d');
+        if (statusChartInstance) statusChartInstance.destroy();
+        statusChartInstance = new Chart(ctxStatus, {
+            type: 'doughnut',
+            data: {
+                labels: ['On Time', 'Delayed', 'On Progress'],
+                datasets: [{
+                    data: [onTime, delayed, progress],
+                    backgroundColor: ['#10b981', '#f43f5e', '#f59e0b']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    function filterTable() {
+        const keyword = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = poData.filter(item => 
+            item.poNumber.toLowerCase().includes(keyword) || 
+            item.customer.toLowerCase().includes(keyword) ||
+            item.product.toLowerCase().includes(keyword)
+        );
+        renderTable(filtered);
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(poData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "production_delivery_data.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+</script>
+
+
